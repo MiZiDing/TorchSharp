@@ -21,7 +21,7 @@ namespace TorchSharp
 #if LIBTORCH_2_2_2_0
     const string libtorchPackageVersion = "2.2.2.0";
 #elif LIBTORCH_2_10_0_0
-    const string libtorchPackageVersion = "2.10.0.0";
+        const string libtorchPackageVersion = "2.10.0.0";
 #elif LIBTORCH_2_7_1_0
     const string libtorchPackageVersion = "2.7.1.0";
 #else
@@ -37,8 +37,13 @@ namespace TorchSharp
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) &&
             RuntimeInformation.OSArchitecture == Architecture.Arm64;
 
+        static bool isLinuxArm64 =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+            RuntimeInformation.OSArchitecture == Architecture.Arm64;
+
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
+            isLinuxArm64 ? "linux-arm64" :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
             isAppleSilicon ? "osx-arm64" :
             "any";
@@ -77,7 +82,8 @@ namespace TorchSharp
             return normalizedVersion;
         }
 
-        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace) {
+        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace)
+        {
             bool ok;
             try {
                 trace.AppendLine($"    Trying to load native component {path}");
@@ -233,8 +239,7 @@ namespace TorchSharp
                                 throw new NotSupportedException(message);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
                     }
                     if (!ok) {
@@ -294,8 +299,7 @@ namespace TorchSharp
 
         public static bool TryInitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon)
-            {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
                 return false;
             }
 
@@ -309,8 +313,7 @@ namespace TorchSharp
 
         public static void InitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon)
-            {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
                 throw new InvalidOperationException($"Torch device type 'MPS' is not available on this platform.");
             }
 
@@ -327,8 +330,7 @@ namespace TorchSharp
 
         public static Device InitializeDevice(Device? device)
         {
-            if (device is null)
-            {
+            if (device is null) {
                 device = get_default_device();
             }
             InitializeDeviceType(device.type);
@@ -623,8 +625,7 @@ namespace TorchSharp
         {
             var error = THSTorch_get_and_reset_last_err();
 
-            if (error != IntPtr.Zero)
-            {
+            if (error != IntPtr.Zero) {
                 throw new ExternalException(Marshal.PtrToStringAnsi(error));
             }
         }

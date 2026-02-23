@@ -55,11 +55,8 @@
     <TargetPlatform Condition="'$(TargetPlatform)' == ''">$(TargetOS)-$(TargetArchitecture)</TargetPlatform>
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
-
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux' AND '$(TargetArchitecture)' != 'arm64'">linux-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux' AND '$(TargetArchitecture)' == 'arm64'">linux-arm64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>
 
     <!-- on windows separate debug binaries of LibTorch are available-->

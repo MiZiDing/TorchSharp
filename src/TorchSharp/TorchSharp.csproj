@@ -3,14 +3,15 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
-      <LangVersion>9.0</LangVersion>
-      <IncludeInPackage>TorchSharp</IncludeInPackage>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
-      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-      <IsPackable>false</IsPackable>
-      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+    <TargetFrameworks>net8.0;net11.0;netstandard2.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+    <IncludeInPackage>TorchSharp</IncludeInPackage>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+    <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+    <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.',
+      '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,12 +50,12 @@
 
 
   <PropertyGroup>
-      <PackDependsOn>
-          $(PackDependsOn);
-          RealPack
-      </PackDependsOn>
-      <SignAssembly>True</SignAssembly>
-      <AssemblyOriginatorKeyFile>..\..\build\TorchSharp.snk</AssemblyOriginatorKeyFile>
+    <PackDependsOn>
+      $(PackDependsOn);
+      RealPack
+    </PackDependsOn>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\TorchSharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 
@@ -64,11 +65,17 @@
   <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
-    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+    <MSBuild
+      Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj"
+      Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'"
+      RemoveProperties="TargetFramework" Targets="Build" />
 
-    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj"
+      Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'"
+      RemoveProperties="TargetFramework" Targets="Build" />
 
-    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'"
+      RemoveProperties="TargetFramework" Targets="Build" />
   </Target>
 
   <Target Name="RealPack">
